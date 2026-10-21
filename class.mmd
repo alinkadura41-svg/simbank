@@ -1,0 +1,54 @@
+classDiagram
+class User {
+ +int id
+ +string fullName
+ +string phone
+ +authenticate()
+}
+class Client {
+ +viewAccounts()
+ +createTransfer()
+}
+class SupportAgent {
+ +viewTickets()
+ +updateTicketStatus()
+}
+class Account {
+ +int id
+ +string maskedNumber
+ +decimal balance
+ +string currency
+ +getBalance()
+}
+class Transaction {
+ +int id
+ +decimal amount
+ +string type
+ +datetime createdAt
+}
+class Transfer {
+ +int id
+ +decimal amount
+ +string status
+ +submit()
+ +cancel()
+}
+class TransferService {
+ +createTransfer()
+ +checkBalance()
+}
+class SupportTicket {
+ +int id
+ +string subject
+ +string status
+ +updateStatus()
+}
+User <|-- Client
+User <|-- SupportAgent
+Client "1" --> "1..*" Account : owns
+Account "1" *-- "0..*" Transaction : contains
+Client "1" --> "0..*" Transfer : creates
+TransferService ..> Account : validates
+TransferService ..> Transfer : creates
+SupportAgent "1" --> "0..*" SupportTicket : handles
+Client "1" --> "0..*" SupportTicket : opens

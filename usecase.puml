@@ -1,0 +1,29 @@
+@startuml
+left to right direction
+actor "Клиент" as Client
+actor "Сотрудник поддержки" as Support
+rectangle "SimBank" {
+ usecase "Войти в систему" as Login
+ usecase "Просмотреть счета" as Accounts
+ usecase "Проверить баланс" as Balance
+ usecase "Посмотреть историю операций" as History
+ usecase "Создать перевод" as Transfer
+ usecase "Проверить статус перевода" as Status
+ usecase "Просмотреть обращения" as Tickets
+ usecase "Изменить статус обращения" as UpdateTicket
+ Accounts ..> Login : <<include>>
+ Balance ..> Login : <<include>>
+ History ..> Login : <<include>>
+ Transfer ..> Login : <<include>>
+ Status ..> Login : <<include>>
+ Tickets ..> Login : <<include>>
+ UpdateTicket ..> Login : <<include>>
+}
+Client --> Accounts
+Client --> Balance
+Client --> History
+Client --> Transfer
+Client --> Status
+Support --> Tickets
+Support --> UpdateTicket
+@enduml

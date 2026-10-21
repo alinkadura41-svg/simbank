@@ -1,0 +1,40 @@
+erDiagram
+ USERS ||--o{ ACCOUNTS : owns
+ ACCOUNTS ||--o{ TRANSACTIONS : contains
+ USERS ||--o{ TRANSFERS : creates
+ ACCOUNTS ||--o{ TRANSFERS : source
+ USERS ||--o{ SUPPORT_TICKETS : opens
+ USERS {
+  int id PK
+  string full_name
+  string phone UK
+ }
+ ACCOUNTS {
+  int id PK
+  int user_id FK
+  string masked_number
+  decimal balance
+  string currency
+ }
+ TRANSACTIONS {
+  int id PK
+  int account_id FK
+  decimal amount
+  string type
+  datetime created_at
+ }
+ TRANSFERS {
+  int id PK
+  int user_id FK
+  int source_account_id FK
+  string destination_account
+  decimal amount
+  string status
+  datetime created_at
+ }
+ SUPPORT_TICKETS {
+  int id PK
+  int user_id FK
+  string subject
+  string status
+ }

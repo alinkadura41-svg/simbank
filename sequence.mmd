@@ -1,0 +1,19 @@
+sequenceDiagram
+ actor Client as Клиент
+ participant API as TransferAPI
+ participant Service as TransferService
+ participant DB as Database
+ Client->>API: POST /transfers (toAccount, amount)
+ API->>API: Проверить авторизацию и формат
+ API->>Service: createTransfer(client, toAccount, amount)
+ Service->>DB: Получить счёт и баланс
+ DB-->>Service: Данные счёта
+ alt Сумма корректна и средств достаточно
+  Service->>DB: Сохранить перевод и списание
+  DB-->>Service: Перевод создан
+  Service-->>API: Transfer(status=processing)
+  API-->>Client: 201 Created + transfer
+ else Недостаточно средств или неверные данные
+  Service-->>API: Ошибка проверки
+  API-->>Client: 400 Bad Request или 409 Conflict
+ end

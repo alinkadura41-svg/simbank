@@ -1,0 +1,102 @@
+openapi: 3.0.3
+info:
+  title: SimBank API (учебная модель)
+  version: 1.0.0
+  description: Проектная спецификация, не реальный банковский API.
+servers:
+  - url: https://api.example.test
+paths:
+  /accounts:
+    get:
+      summary: Получить счета текущего клиента
+      responses:
+        '200':
+          description: Список счетов
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Account'
+        '401':
+          description: Требуется авторизация
+  /transfers:
+    post:
+      summary: Создать перевод
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransferCreate'
+      responses:
+        '201':
+          description: Перевод создан
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Transfer'
+        '400':
+          description: Неверные поля или сумма
+        '401':
+          description: Требуется авторизация
+        '404':
+          description: Счёт не найден
+        '409':
+          description: Недостаточно средств или конфликт статуса
+  /transfers/{transferId}:
+    get:
+      summary: Получить статус перевода
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: transferId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Перевод найден
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Transfer'
+        '401':
+          description: Требуется авторизация
+        '404':
+          description: Перевод не найден
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+  schemas:
+    Account:
+      type: object
+      properties:
+        id: {type: integer}
+        maskedNumber: {type: string, example: '**** 1234'}
+        balance: {type: number, format: double}
+        currency: {type: string, example: KGS}
+    TransferCreate:
+      type: object
+      required: [sourceAccountId, destinationAccount, amount, currency]
+      properties:
+        sourceAccountId: {type: integer}
+        destinationAccount: {type: string}
+        amount: {type: number, exclusiveMinimum: 0}
+        currency: {type: string, example: KGS}
+    Transfer:
+      type: object
+      properties:
+        id: {type: integer}
+        sourceAccountId: {type: integer}
+        destinationAccount: {type: string}
+        amount: {type: number}
+        currency: {type: string}
+        status:
+          type: string
+          enum: [processing, completed, rejected, cancelled]
